@@ -5,7 +5,7 @@ A super simple FastAPI application that allows students to view and sign up for 
 ## Features
 
 - View all available extracurricular activities
-- Sign up for activities
+- Teacher-only sign up and unregister controls
 
 ## Getting Started
 
@@ -15,13 +15,20 @@ A super simple FastAPI application that allows students to view and sign up for 
    pip install fastapi uvicorn
    ```
 
-2. Run the application:
+2. Set credentials for the teacher account in the environment. Do not commit credentials:
+
+   ```
+   export TEACHER_USERNAME=teacher
+   export TEACHER_PASSWORD='choose-a-strong-password'
+   ```
+
+3. Run the application:
 
    ```
    python app.py
    ```
 
-3. Open your browser and go to:
+4. Open your browser and go to:
    - API documentation: http://localhost:8000/docs
    - Alternative documentation: http://localhost:8000/redoc
 
@@ -30,7 +37,11 @@ A super simple FastAPI application that allows students to view and sign up for 
 | Method | Endpoint                                                          | Description                                                         |
 | ------ | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
 | GET    | `/activities`                                                     | Get all activities with their details and current participant count |
-| POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Sign up for an activity                                             |
+| POST   | `/auth/login`                                                     | Verify teacher credentials using HTTP Basic authentication          |
+| POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Sign up for an activity (teacher authentication required)            |
+| DELETE | `/activities/{activity_name}/unregister?email=student@mergington.edu` | Unregister a student (teacher authentication required)            |
+
+Activity viewing remains public. Registration changes require the configured teacher username and password. The browser keeps the login credentials in memory only, so refreshing the page logs the teacher out. Use HTTPS when exposing the app beyond local development because HTTP Basic credentials are sent with each write request.
 
 ## Data Model
 
